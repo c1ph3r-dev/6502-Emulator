@@ -37,7 +37,8 @@ struct MEM
 
 enum class opcodes : Byte
 {
-    INS_LDA_IM = 0xA9
+    INS_LDA_IM = 0xA9,
+    INS_LDA_ZP = 0xA5
 };
 
 struct CPU
@@ -64,6 +65,19 @@ private:
         return Data;
     }
 
+    Byte read_byte(u32& cycles, MEM& memory, u32 address)
+    {
+        auto Data = memory[address];
+        cycles--;
+        return Data;
+    }
+
+    inline void lda_set_status()
+    {
+        Z = (A == 0);
+        N = (A & 0b10000000) > 0;
+    }
+
 public:
     void reset(MEM& memory)
     {
@@ -83,8 +97,14 @@ public:
             {
                 case opcodes::INS_LDA_IM:
                     A = fetch_byte(cycles, memory);
-                    Z = (A == 0);
-                    N = (A & 0b10000000) > 0;
+                    lda_set_status();
+                    break;
+                case opcodes::INS_LDA_ZP:
+                    {
+                        Byte ZeroPageAddr = fetch_byte(cycles, memory);
+                        A = read_byte(cycles, memory, ZeroPageAddr);
+                    }
+                    lda_set_status();
                     break;
                 default:
                     printf("Unknown opcode: %02X\n", Instruction);
@@ -100,9 +120,10 @@ int main()
     CPU cpu;
     cpu.reset(memory);
     // start - inline a little program
-    memory[0xFFFC] = (Byte)opcodes::INS_LDA_IM;
+    memory[0xFFFC] = (Byte)opcodes::INS_LDA_ZP;
     memory[0xFFFD] = 0x42;
+    memory[0x0042] = 0x84;
     // end - inline a little program
-    cpu.exec(2, memory);
+    cpu.exec(3, memory);
     return 0;
 }
