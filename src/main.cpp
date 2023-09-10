@@ -33,13 +33,22 @@ struct MEM
         assert(address < MAX_MEM);
         return Data[address]; 
     } 
+
+    /** Write 2 bytes */
+    void write_word(u32& cycles, Word data, u32 address)
+    {
+        Data[address] = data & 0xFF;
+        Data[address + 1] = (data >> 8);
+        cycles -= 2;
+    }
 };
 
 enum class opcodes : Byte
 {
     INS_LDA_IM = 0xA9,
     INS_LDA_ZP = 0xA5,
-    INS_LDA_ZPX = 0xB5
+    INS_LDA_ZPX = 0xB5,
+    INS_JSR = 0x20
 };
 
 struct CPU
@@ -63,6 +72,20 @@ private:
         auto Data = memory[PC];
         PC++;
         cycles--;
+        return Data;
+    }
+
+    Word fetch_word(u32& cycles, MEM& memory)
+    {
+        // 6502 is little endian
+        Word Data = memory[PC];
+        PC++;
+
+        Data |= (memory[PC] << 8);
+        PC++;
+
+        cycles -= 2;
+
         return Data;
     }
 
@@ -118,6 +141,15 @@ public:
                     lda_set_status();
                 }
                 break;
+                case opcodes::INS_JSR:
+                {
+                    Word SubAddr = fetch_word(cycles, memory);
+                    memory.write_word(cycles, PC - 1, SP);
+                    PC = SubAddr;
+                    SP++;
+                    cycles--;
+                }
+                break;
                 default:
                     printf("Unknown opcode: %02X\n", Instruction);
                     break;
@@ -132,10 +164,12 @@ int main()
     CPU cpu;
     cpu.reset(memory);
     // start - inline a little program
-    memory[0xFFFC] = (Byte)opcodes::INS_LDA_ZP;
+    memory[0xFFFC] = (Byte)opcodes::INS_JSR;
     memory[0xFFFD] = 0x42;
-    memory[0x0042] = 0x84;
+    memory[0xFFFE] = 0x42;
+    memory[0x4242] = (Byte)opcodes::INS_LDA_IM;
+    memory[0x4243] = 0x84;
     // end - inline a little program
-    cpu.exec(3, memory);
+    cpu.exec(9, memory);
     return 0;
 }
