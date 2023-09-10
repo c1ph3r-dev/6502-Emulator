@@ -38,7 +38,8 @@ struct MEM
 enum class opcodes : Byte
 {
     INS_LDA_IM = 0xA9,
-    INS_LDA_ZP = 0xA5
+    INS_LDA_ZP = 0xA5,
+    INS_LDA_ZPX = 0xB5
 };
 
 struct CPU
@@ -96,16 +97,27 @@ public:
             switch((opcodes)Instruction)
             {
                 case opcodes::INS_LDA_IM:
-                    A = fetch_byte(cycles, memory);
-                    lda_set_status();
+                    {
+                        A = fetch_byte(cycles, memory);
+                        lda_set_status();
+                    }
                     break;
                 case opcodes::INS_LDA_ZP:
                     {
                         Byte ZeroPageAddr = fetch_byte(cycles, memory);
                         A = read_byte(cycles, memory, ZeroPageAddr);
+                        lda_set_status();
                     }
-                    lda_set_status();
                     break;
+                case opcodes::INS_LDA_ZPX:
+                {
+                    Byte ZeroPageAddr = fetch_byte(cycles, memory);
+                    ZeroPageAddr += X;
+                    cycles--;
+                    A = read_byte(cycles, memory, ZeroPageAddr);
+                    lda_set_status();
+                }
+                break;
                 default:
                     printf("Unknown opcode: %02X\n", Instruction);
                     break;
