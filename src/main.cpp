@@ -1,8 +1,14 @@
 #include "../include/cpu.h"
+#include <iostream>
+#include <string>
+#include <vector>
+#include <map>
 
 // http://www.obelisk.me.uk/6502/
 
-bool RunTest(bool (* test)(CPU, MEM), const CPU& cpu, const MEM& memory)
+typedef bool(*TEST)(CPU, MEM);
+
+bool RunTest(TEST test, const CPU& cpu, const MEM& memory)
 {
     return test(cpu, memory);
 }
@@ -13,7 +19,11 @@ int main()
     CPU cpu;
     cpu.reset(memory);
 
-    auto test1 = [](CPU cpu, MEM memory){
+    std::vector<TEST> tests;
+    std::map<TEST, std::string> test_desc;
+
+    // Test that determines if LDA Immediate can load a value into the a register
+    TEST test1 = [](CPU cpu, MEM memory){
         // start - inline a little program
         memory[0xFFFC] = (Byte)opcodes::INS_JSR;
         memory[0xFFFD] = 0x42;
@@ -26,9 +36,15 @@ int main()
         return cpu.A == 0x84;
     };
 
-    if(RunTest(test1, cpu, memory))
+    tests.push_back(test1);
+    test_desc[test1] = "LDA Immediate can load a value into the a register\n";
+
+    for(auto& test : tests)
     {
-        printf("Test 1 passed\n");
+        if(RunTest(test, cpu, memory))
+        {
+            std::cout << test_desc[test];
+        }
     }
 
     return 0;
