@@ -22,7 +22,7 @@ struct CPU
     Byte N : 1; // Status flag {Negative}
 
 private:
-    Byte fetch_byte(u32& cycles, MEM& memory)
+    Byte fetch_byte(s32& cycles, MEM& memory)
     {
         auto Data = memory[PC];
         PC++;
@@ -30,7 +30,7 @@ private:
         return Data;
     }
 
-    Word fetch_word(u32& cycles, MEM& memory)
+    Word fetch_word(s32& cycles, MEM& memory)
     {
         // 6502 is little endian
         Word Data = memory[PC];
@@ -44,11 +44,18 @@ private:
         return Data;
     }
 
-    Byte read_byte(u32& cycles, MEM& memory, u32 address)
+    Byte read_byte(s32& cycles, MEM& memory, u32 address)
     {
         auto Data = memory[address];
         cycles--;
         return Data;
+    }
+
+    Word read_word(s32& cycles, MEM& memory, u32 address)
+    {
+        Byte LoByte = read_byte(cycles, memory, address);
+        Byte HiByte = read_byte(cycles, memory, address + 1);
+        return LoByte | (HiByte << 8);
     }
 
     inline void lda_set_status()
@@ -67,8 +74,10 @@ public:
         memory.initialize();
     }
 
-    void exec(u32 cycles, MEM& memory)
+    /** @return the number of cycles that were used */
+    s32 exec(s32 cycles, MEM& memory)
     {
+        const s32 CyclesRequested = cycles;
         while(cycles > 0)
         {
             Byte Instruction = fetch_byte(cycles, memory);
@@ -100,8 +109,8 @@ public:
                 {
                     Word SubAddr = fetch_word(cycles, memory);
                     memory.write_word(cycles, PC - 1, SP);
+                    SP += 2;
                     PC = SubAddr;
-                    SP++;
                     cycles--;
                 }
                 break;
@@ -110,6 +119,8 @@ public:
                     break;
             }
         }
+        const s32 NumCyclesUsed = CyclesRequested - cycles;
+        return NumCyclesUsed;
     }
 };
 

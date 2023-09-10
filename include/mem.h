@@ -30,7 +30,7 @@ struct MEM
     } 
 
     /** Write 2 bytes */
-    void write_word(u32& cycles, Word data, u32 address)
+    void write_word(s32& cycles, Word data, u32 address)
     {
         Data[address] = data & 0xFF;
         Data[address + 1] = (data >> 8);
