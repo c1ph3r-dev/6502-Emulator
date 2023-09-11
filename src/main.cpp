@@ -14,6 +14,9 @@ int main()
     std::vector<TEST> tests;
     std::map<TEST, std::string> test_desc;
 
+    tests.push_back(test0);
+    test_desc[test0] = "LDA Immediate sets Zero flag when 0 is loaded into the a register";
+
     tests.push_back(test1);
     test_desc[test1] = "LDA Immediate can load a value into the a register";
 
@@ -25,6 +28,12 @@ int main()
     
     tests.push_back(test4);
     test_desc[test4] = "LDA Zero Page X can load a value into the a register when it wraps";
+
+    tests.push_back(test5);
+    test_desc[test5] = "the CPU does nothing when we execute zero cycles";
+
+    tests.push_back(test6);
+    test_desc[test6] = "the CPU can execute more cycles than requested if required by the instruction";
 
     for(auto& test : tests)
     {
