@@ -2,6 +2,7 @@
 #include "../include/tests.h"
 #include <iostream>
 
+using namespace EM6502;
 
 // http://www.obelisk.me.uk/6502/
 
