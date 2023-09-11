@@ -18,7 +18,12 @@ namespace EM6502
 
     static bool VerfifyUnmodifiedFlagsFromLDA(const CPU& cpu, const CPU& cpu_copy)
     {
-        return cpu.C == cpu_copy.C && cpu.I == cpu_copy.I && cpu.D == cpu_copy.D && cpu.B == cpu_copy.B && cpu.V == cpu_copy.V;
+        return 
+        cpu.C == cpu_copy.C && 
+        cpu.I == cpu_copy.I && 
+        cpu.D == cpu_copy.D && 
+        cpu.B == cpu_copy.B && 
+        cpu.V == cpu_copy.V;
     }
 
     // Test that determines if the CPU does nothing when we execute zero cycles
