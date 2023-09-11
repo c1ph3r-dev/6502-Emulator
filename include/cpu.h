@@ -3,6 +3,7 @@
 
 #include "utils.h"
 #include "mem.h"
+#include "instruction_set.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -24,6 +25,28 @@ namespace EM6502
         Byte N : 1; // Status flag {Negative}
 
     private:
+        std::map<opcodes, INSTRUCTION> instructions;
+
+        void set_instructions()
+        {
+            instructions[opcodes::INS_NOP] = NOP;
+            instructions[opcodes::INS_LDA_IM] = LDA_IM;
+            instructions[opcodes::INS_LDA_ZP] = LDA_ZP;
+            instructions[opcodes::INS_LDA_ZPX] = LDA_ZPX;
+            instructions[opcodes::INS_JSR] = JSR;
+        }
+
+        void reset(Word ResetVector, MEM& memory)
+    	{
+    		PC = ResetVector;
+    		SP = 0x0100;
+    		C = Z = I = D = B = V = N = 0;
+    		A = X = Y = 0;
+            set_instructions();
+    		memory.initialize();
+    	}
+    public:
+
         Byte fetch_byte(s32& cycles, MEM& memory)
         {
             auto Data = memory[PC];
@@ -66,16 +89,6 @@ namespace EM6502
             N = (A & 0b10000000) > 0;
         }
 
-        void reset(Word ResetVector, MEM& memory)
-    	{
-    		PC = ResetVector;
-    		SP = 0x0100;
-    		C = Z = I = D = B = V = N = 0;
-    		A = X = Y = 0;
-    		memory.initialize();
-    	}
-
-    public:
         /**
          * @brief resets the cpu's PC, SP and registers and also initializes the memory
          * 
@@ -99,48 +112,10 @@ namespace EM6502
             while(cycles > 0)
             {
                 Byte Instruction = fetch_byte(cycles, memory);
-                switch((opcodes)Instruction)
-                {
-                    case opcodes::INS_NOP:
-                        {
-                            cycles--;
-                        }
-                        break;
-                    case opcodes::INS_LDA_IM:
-                        {
-                            A = fetch_byte(cycles, memory);
-                            lda_set_status();
-                        }
-                        break;
-                    case opcodes::INS_LDA_ZP:
-                        {
-                            Byte ZeroPageAddr = fetch_byte(cycles, memory);
-                            A = read_byte(cycles, memory, ZeroPageAddr);
-                            lda_set_status();
-                        }
-                        break;
-                    case opcodes::INS_LDA_ZPX:
-                    {
-                        Byte ZeroPageAddr = fetch_byte(cycles, memory);
-                        ZeroPageAddr += X;
-                        cycles--;
-                        A = read_byte(cycles, memory, ZeroPageAddr);
-                        lda_set_status();
-                    }
-                    break;
-                    case opcodes::INS_JSR:
-                    {
-                        Word SubAddr = fetch_word(cycles, memory);
-                        memory.write_word(cycles, PC - 1, SP);
-                        SP += 2;
-                        PC = SubAddr;
-                        cycles--;
-                    }
-                    break;
-                    default:
-                        printf("Unknown opcode: %02X\n", Instruction);
-                        break;
-                }
+                if (instructions.count((opcodes)Instruction))
+                    instructions[(opcodes)Instruction](this, cycles, &memory);
+                else 
+                    printf("Unhandled instruction: %02X\n", Instruction);
             }
             const s32 NumCyclesUsed = CyclesRequested - cycles;
             return NumCyclesUsed;
