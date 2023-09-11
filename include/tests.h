@@ -132,5 +132,18 @@ namespace EM6502
         bool flags = VerfifyUnmodifiedFlagsFromLDA(cpu, cpu_copy);
         return cpu.A == 0x37 && !cpu.Z && !cpu.N && flags && cycles_used == 4;
     };
+
+    // Test that determines if NOP instruction works correctly
+    static TEST test7 = [](CPU cpu, MEM memory){
+        // given:
+        memory[0xFFFC] = (Byte)opcodes::INS_NOP;
+
+        // when:
+        CPU cpu_copy = cpu;
+        auto cycles_used = cpu.exec(2, memory);
+
+        // then:
+        return cpu_copy.PC == cpu.PC - 1 && cycles_used == 2;
+    };
 }
 #endif // EM6502_TESTS_H_

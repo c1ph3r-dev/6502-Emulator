@@ -12,9 +12,9 @@ namespace EM6502
     {
         Word PC;        // Program counter
         Word SP;        // Stack pointer // ToDo: switch to Byte
-    
+
         Byte A, X, Y;   // Registers
-    
+
         Byte C : 1; // Status flag {Carry}
         Byte Z : 1; // Status flag {Zero}
         Byte I : 1; // Status flag {Interrupt Disable}
@@ -22,7 +22,7 @@ namespace EM6502
         Byte B : 1; // Status flag {Break Command}
         Byte V : 1; // Status flag {Overflow}
         Byte N : 1; // Status flag {Negative}
-    
+
     private:
         Byte fetch_byte(s32& cycles, MEM& memory)
         {
@@ -31,41 +31,41 @@ namespace EM6502
             cycles--;
             return Data;
         }
-    
+
         Word fetch_word(s32& cycles, MEM& memory)
         {
             // 6502 is little endian
             Word Data = memory[PC];
             PC++;
-    
+
             Data |= (memory[PC] << 8);
             PC++;
-    
+
             cycles -= 2;
-    
+
             return Data;
         }
-    
+
         Byte read_byte(s32& cycles, MEM& memory, u32 address)
         {
             auto Data = memory[address];
             cycles--;
             return Data;
         }
-    
+
         Word read_word(s32& cycles, MEM& memory, u32 address)
         {
             Byte LoByte = read_byte(cycles, memory, address);
             Byte HiByte = read_byte(cycles, memory, address + 1);
             return LoByte | (HiByte << 8);
         }
-    
+
         inline void lda_set_status()
         {
             Z = (A == 0);
             N = (A & 0b10000000) > 0;
         }
-    
+
         void reset(Word ResetVector, MEM& memory)
     	{
     		PC = ResetVector;
@@ -74,7 +74,7 @@ namespace EM6502
     		A = X = Y = 0;
     		memory.initialize();
     	}
-    
+
     public:
         /**
          * @brief resets the cpu's PC, SP and registers and also initializes the memory
@@ -85,7 +85,7 @@ namespace EM6502
         {
             reset(0xFFFC, memory);
         }
-    
+
         /**
          * @brief executes a program stored in a MEM object
          * 
@@ -101,6 +101,11 @@ namespace EM6502
                 Byte Instruction = fetch_byte(cycles, memory);
                 switch((opcodes)Instruction)
                 {
+                    case opcodes::INS_NOP:
+                        {
+                            cycles--;
+                        }
+                        break;
                     case opcodes::INS_LDA_IM:
                         {
                             A = fetch_byte(cycles, memory);

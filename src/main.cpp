@@ -4,7 +4,7 @@
 
 using namespace EM6502;
 
-// http://www.obelisk.me.uk/6502/
+// https://web.archive.org/web/20210909190432/http://www.obelisk.me.uk/6502/
 
 int main()
 {
@@ -16,10 +16,10 @@ int main()
     std::map<TEST, std::string> test_desc;
 
     tests.push_back(test0);
-    test_desc[test0] = "the CPU does nothing when we execute zero cycles";
+    test_desc[test0] = "CPU does nothing when we execute zero cycles";
 
     tests.push_back(test1);
-    test_desc[test1] = "the CPU can execute more cycles than requested if required by the instruction";
+    test_desc[test1] = "CPU can execute more cycles than requested if required by the instruction";
 
     tests.push_back(test2);
     test_desc[test2] = "LDA Immediate sets Zero flag when 0 is loaded into the a register";
@@ -35,6 +35,9 @@ int main()
     
     tests.push_back(test6);
     test_desc[test6] = "LDA Zero Page X can load a value into the a register when it wraps";
+
+    tests.push_back(test7);
+    test_desc[test7] = "NOP instruction works correctly";
 
     for(auto& test : tests)
     {
