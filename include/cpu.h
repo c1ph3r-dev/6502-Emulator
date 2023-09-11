@@ -46,14 +46,14 @@ namespace EM6502
             return Data;
         }
 
-        Byte read_byte(s32& cycles, MEM& memory, u32 address)
+        Byte read_byte(s32& cycles, MEM& memory, Word address)
         {
             auto Data = memory[address];
             cycles--;
             return Data;
         }
 
-        Word read_word(s32& cycles, MEM& memory, u32 address)
+        Word read_word(s32& cycles, MEM& memory, Word address)
         {
             Byte LoByte = read_byte(cycles, memory, address);
             Byte HiByte = read_byte(cycles, memory, address + 1);
