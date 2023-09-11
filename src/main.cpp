@@ -13,42 +13,35 @@ int main()
     cpu.reset(memory);
 
     std::vector<TEST> tests;
-    std::map<TEST, std::string> test_desc;
-
     tests.push_back(test0);
-    test_desc[test0] = "CPU does nothing when we execute zero cycles";
-
     tests.push_back(test1);
-    test_desc[test1] = "CPU can execute more cycles than requested if required by the instruction";
-
     tests.push_back(test2);
-    test_desc[test2] = "LDA Immediate sets Zero flag when 0 is loaded into the a register";
-
     tests.push_back(test3);
-    test_desc[test3] = "LDA Immediate can load a value into the a register";
-
     tests.push_back(test4);
-    test_desc[test4] = "LDA Zero Page can load a value into the a register";
-    
     tests.push_back(test5);
-    test_desc[test5] = "LDA Zero Page X can load a value into the a register";
-    
     tests.push_back(test6);
-    test_desc[test6] = "LDA Zero Page X can load a value into the a register when it wraps";
-
     tests.push_back(test7);
-    test_desc[test7] = "NOP instruction works correctly";
+    tests.push_back(test8);
+    tests.push_back(test9);
+    tests.push_back(test10);
+    tests.push_back(test11);
+    tests.push_back(test12);
+    tests.push_back(test13);
+    tests.push_back(test14);
+    tests.push_back(test15);
 
+    int count{0};
     for(auto& test : tests)
     {
         if(RunTest(test, cpu, memory))
         {
-            std::cout << test_desc[test] << '\n';
+            std::cout << count << '\n';
         }
         else
         {
-            std::cout << test_desc[test] << " - TEST FAILED\n";
+            std::cout << count << " - TEST FAILED\n";
         }
+        count++;
     }
 
     return 0;

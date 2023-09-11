@@ -29,10 +29,16 @@ namespace EM6502
 
         void set_instructions()
         {
+            // ADD INSTRUCTIONS FUNCTION TO MAP USING OPCODE AS KEY TO ENABLE HANDLING OF INSTRUCTION
             instructions[opcodes::INS_NOP] = NOP;
             instructions[opcodes::INS_LDA_IM] = LDA_IM;
             instructions[opcodes::INS_LDA_ZP] = LDA_ZP;
             instructions[opcodes::INS_LDA_ZPX] = LDA_ZPX;
+            instructions[opcodes::INS_LDA_ABS] = LDA_ABS;
+            instructions[opcodes::INS_LDA_ABSX] = LDA_ABSX;
+            instructions[opcodes::INS_LDA_ABSY] = LDA_ABSY;
+            instructions[opcodes::INS_LDA_INDX] = LDA_INDX;
+            instructions[opcodes::INS_LDA_INDY] = LDA_INDY;
             instructions[opcodes::INS_JSR] = JSR;
         }
 
@@ -115,7 +121,10 @@ namespace EM6502
                 if (instructions.count((opcodes)Instruction))
                     instructions[(opcodes)Instruction](this, cycles, &memory);
                 else 
+                {
                     printf("Unhandled instruction: %02X\n", Instruction);
+                    throw -1;
+                }
             }
             const s32 NumCyclesUsed = CyclesRequested - cycles;
             return NumCyclesUsed;
