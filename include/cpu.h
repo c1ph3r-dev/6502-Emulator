@@ -64,17 +64,33 @@ private:
         N = (A & 0b10000000) > 0;
     }
 
+    void reset(Word ResetVector, MEM& memory)
+	{
+		PC = ResetVector;
+		SP = 0x0100;
+		C = Z = I = D = B = V = N = 0;
+		A = X = Y = 0;
+		memory.initialize();
+	}
+
 public:
+    /**
+     * @brief resets the cpu's PC, SP and registers and also initializes the memory
+     * 
+     * @param memory MEM object to initialize
+     */
     void reset(MEM& memory)
     {
-        PC = 0xFFFC;
-        SP = 0x0100;
-        C = Z = I = D = B = V = N = 0;
-        A = X = Y = 0;
-        memory.initialize();
+        reset(0xFFFC, memory);
     }
 
-    /** @return the number of cycles that were used */
+    /**
+     * @brief executes a program stored in a MEM object
+     * 
+     * @param cycles: number of cycles the program takes to execute e.g. LDA Immediate uses 2 cycles
+     * @param memory: MEM object containing the program instructions and data to be executed
+     * 
+     * @return the number of cycles that were used */
     s32 exec(s32 cycles, MEM& memory)
     {
         const s32 CyclesRequested = cycles;

@@ -15,25 +15,25 @@ int main()
     std::map<TEST, std::string> test_desc;
 
     tests.push_back(test0);
-    test_desc[test0] = "LDA Immediate sets Zero flag when 0 is loaded into the a register";
+    test_desc[test0] = "the CPU does nothing when we execute zero cycles";
 
     tests.push_back(test1);
-    test_desc[test1] = "LDA Immediate can load a value into the a register";
+    test_desc[test1] = "the CPU can execute more cycles than requested if required by the instruction";
 
     tests.push_back(test2);
-    test_desc[test2] = "LDA Zero Page can load a value into the a register";
-    
+    test_desc[test2] = "LDA Immediate sets Zero flag when 0 is loaded into the a register";
+
     tests.push_back(test3);
-    test_desc[test3] = "LDA Zero Page X can load a value into the a register";
-    
+    test_desc[test3] = "LDA Immediate can load a value into the a register";
+
     tests.push_back(test4);
-    test_desc[test4] = "LDA Zero Page X can load a value into the a register when it wraps";
-
+    test_desc[test4] = "LDA Zero Page can load a value into the a register";
+    
     tests.push_back(test5);
-    test_desc[test5] = "the CPU does nothing when we execute zero cycles";
-
+    test_desc[test5] = "LDA Zero Page X can load a value into the a register";
+    
     tests.push_back(test6);
-    test_desc[test6] = "the CPU can execute more cycles than requested if required by the instruction";
+    test_desc[test6] = "LDA Zero Page X can load a value into the a register when it wraps";
 
     for(auto& test : tests)
     {

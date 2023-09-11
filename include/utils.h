@@ -7,6 +7,8 @@ using Word = unsigned short;
 using u32 = unsigned int;
 using s32 = signed int;
 
+static constexpr u32 MAX_MEM = 1024 * 64;
+
 enum class opcodes : Byte
 {
     INS_LDA_IM = 0xA9,

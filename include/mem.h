@@ -6,14 +6,23 @@
 
 struct MEM
 {
-    static constexpr u32 MAX_MEM = 1024 * 64;
     Byte Data[MAX_MEM];
 
+    /**
+     * @brief initializes the memory to 0
+     * 
+     */
     void initialize()
     {
         for (auto& data : Data)
             data = 0;
     }
+
+    /**
+     * @brief loads a program into the object
+     * 
+     */
+    // void load_program(); UNUSED
 
     /** Read 1 byte */
     Byte operator[](u32 address) const
