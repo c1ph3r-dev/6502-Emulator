@@ -13,22 +13,20 @@ int main()
     cpu.reset(memory);
 
     std::vector<TEST> tests;
-    tests.push_back(test0);
-    tests.push_back(test1);
-    tests.push_back(test2);
-    tests.push_back(test3);
-    tests.push_back(test4);
-    tests.push_back(test5);
-    tests.push_back(test6);
-    tests.push_back(test7);
-    tests.push_back(test8);
-    tests.push_back(test9);
-    tests.push_back(test10);
-    tests.push_back(test11);
-    tests.push_back(test12);
-    tests.push_back(test13);
-    tests.push_back(test14);
-    tests.push_back(test15);
+    tests.push_back(LDX_IM_TEST);
+    tests.push_back(LDX_IM_ZERO_TEST);
+    tests.push_back(LDX_ZP_TEST);
+    tests.push_back(LDX_ZPY_WRAP_TEST);
+    tests.push_back(LDX_ABS_TEST);
+    tests.push_back(LDX_ABSY_TEST);
+    tests.push_back(LDX_ABSY_CROSS_TEST);
+    tests.push_back(LDY_IM_TEST);
+    tests.push_back(LDY_IM_ZERO_TEST);
+    tests.push_back(LDY_ZP_TEST);
+    tests.push_back(LDY_ZPX_WRAP_TEST);
+    tests.push_back(LDY_ABS_TEST);
+    tests.push_back(LDY_ABSX_TEST);
+    tests.push_back(LDY_ABSX_CROSS_TEST);
 
     int count{0};
     for(auto& test : tests)

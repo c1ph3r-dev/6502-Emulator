@@ -39,6 +39,16 @@ namespace EM6502
             instructions[opcodes::INS_LDA_ABSY] = LDA_ABSY;
             instructions[opcodes::INS_LDA_INDX] = LDA_INDX;
             instructions[opcodes::INS_LDA_INDY] = LDA_INDY;
+            instructions[opcodes::INS_LDX_IM] = LDX_IM;
+            instructions[opcodes::INS_LDX_ZP] = LDX_ZP;
+            instructions[opcodes::INS_LDX_ZPY] = LDX_ZPY;
+            instructions[opcodes::INS_LDX_ABS] = LDX_ABS;
+            instructions[opcodes::INS_LDX_ABSY] = LDX_ABSY;
+            instructions[opcodes::INS_LDY_IM] = LDY_IM;
+            instructions[opcodes::INS_LDY_ZP] = LDY_ZP;
+            instructions[opcodes::INS_LDY_ZPX] = LDY_ZPX;
+            instructions[opcodes::INS_LDY_ABS] = LDY_ABS;
+            instructions[opcodes::INS_LDY_ABSX] = LDY_ABSX;
             instructions[opcodes::INS_JSR] = JSR;
         }
 
@@ -89,10 +99,10 @@ namespace EM6502
             return LoByte | (HiByte << 8);
         }
 
-        inline void lda_set_status()
+        inline void ld_set_status(Byte& reg)
         {
-            Z = (A == 0);
-            N = (A & 0b10000000) > 0;
+            Z = (reg == 0);
+            N = (reg & 0b10000000) > 0;
         }
 
         /**

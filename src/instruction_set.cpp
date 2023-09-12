@@ -11,14 +11,14 @@ namespace EM6502
   void LDA_IM(CPU* cpu, s32& cycles, MEM* memory)
   {
     cpu->A = cpu->fetch_byte(cycles, *memory);
-    cpu->lda_set_status();
+    cpu->ld_set_status(cpu->A);
   };
 
   void LDA_ZP(CPU* cpu, s32& cycles, MEM* memory)
   {
     Byte ZeroPageAddr = cpu->fetch_byte(cycles, *memory);
     cpu->A = cpu->read_byte(cycles, *memory, ZeroPageAddr);
-    cpu->lda_set_status();
+    cpu->ld_set_status(cpu->A);
   }
 
   void LDA_ZPX(CPU* cpu, s32& cycles, MEM* memory)
@@ -27,13 +27,14 @@ namespace EM6502
     ZeroPageAddr += cpu->X;
     cycles--;
     cpu->A = cpu->read_byte(cycles, *memory, ZeroPageAddr);
-    cpu->lda_set_status();
+    cpu->ld_set_status(cpu->A);
   }
 
   void LDA_ABS(CPU* cpu, s32& cycles, MEM* memory)
   {
     Word AbsAddr = cpu->fetch_word(cycles, *memory);
     cpu->A = cpu->read_byte(cycles, *memory, AbsAddr);
+    cpu->ld_set_status(cpu->A);
   }
 
   void LDA_ABSX(CPU* cpu, s32& cycles, MEM* memory)
@@ -43,6 +44,7 @@ namespace EM6502
     if (AbsAddrX - AbsAddr >= 0xFF)
       cycles--;
     cpu->A = cpu->read_byte(cycles, *memory, AbsAddrX);
+    cpu->ld_set_status(cpu->A);
   }
 
   void LDA_ABSY(CPU* cpu, s32& cycles, MEM* memory)
@@ -52,6 +54,7 @@ namespace EM6502
     if (AbsAddrY - AbsAddr >= 0xFF)
       cycles--;
     cpu->A = cpu->read_byte(cycles, *memory, AbsAddrY);
+    cpu->ld_set_status(cpu->A);
   }
 
   void LDA_INDX(CPU* cpu, s32& cycles, MEM* memory)
@@ -61,6 +64,7 @@ namespace EM6502
 		cycles--;
 		Word EffectiveAddr = cpu->read_word(cycles, *memory, ZPAddress);
   	cpu->A = cpu->read_byte(cycles, *memory, EffectiveAddr);
+    cpu->ld_set_status(cpu->A);
   }
 
   void LDA_INDY(CPU* cpu, s32& cycles, MEM* memory)
@@ -71,6 +75,85 @@ namespace EM6502
 		if(EffectiveAddrY - EffectiveAddr >= 0xFF)
 		  cycles--;
   	cpu->A = cpu->read_byte(cycles, *memory, EffectiveAddrY);
+    cpu->ld_set_status(cpu->A);
+  }
+
+  void LDX_IM(CPU* cpu, s32& cycles, MEM* memory)
+  {
+    cpu->X = cpu->fetch_byte(cycles, *memory);
+    cpu->ld_set_status(cpu->X);
+  }
+
+  void LDX_ZP(CPU* cpu, s32& cycles, MEM* memory)
+  {
+    Byte ZeroPageAddr = cpu->fetch_byte(cycles, *memory);
+    cpu->X = cpu->read_byte(cycles, *memory, ZeroPageAddr);
+    cpu->ld_set_status(cpu->X);
+  }
+
+  void LDX_ZPY(CPU* cpu, s32& cycles, MEM* memory)
+  {
+    Byte ZeroPageAddr = cpu->fetch_byte(cycles, *memory);
+    ZeroPageAddr += cpu->Y;
+    cycles--;
+    cpu->X = cpu->read_byte(cycles, *memory, ZeroPageAddr);
+    cpu->ld_set_status(cpu->X);
+  }
+
+  void LDX_ABS(CPU* cpu, s32& cycles, MEM* memory)
+  {
+    Word AbsAddr = cpu->fetch_word(cycles, *memory);
+    cpu->X = cpu->read_byte(cycles, *memory, AbsAddr);
+    cpu->ld_set_status(cpu->X);
+  }
+
+  void LDX_ABSY(CPU* cpu, s32& cycles, MEM* memory)
+  {
+    Word AbsAddr = cpu->fetch_word(cycles, *memory);
+    Word AbsAddrY = AbsAddr + cpu->Y;
+    if (AbsAddrY - AbsAddr >= 0xFF)
+      cycles--;
+    cpu->X = cpu->read_byte(cycles, *memory, AbsAddrY);
+    cpu->ld_set_status(cpu->X);
+  }
+
+  void LDY_IM(CPU* cpu, s32& cycles, MEM* memory)
+  {
+    cpu->Y = cpu->fetch_byte(cycles, *memory);
+    cpu->ld_set_status(cpu->Y);
+  }
+
+  void LDY_ZP(CPU* cpu, s32& cycles, MEM* memory)
+  {
+    Byte ZeroPageAddr = cpu->fetch_byte(cycles, *memory);
+    cpu->Y = cpu->read_byte(cycles, *memory, ZeroPageAddr);
+    cpu->ld_set_status(cpu->Y);
+  }
+
+  void LDY_ZPX(CPU* cpu, s32& cycles, MEM* memory)
+  {
+    Byte ZeroPageAddr = cpu->fetch_byte(cycles, *memory);
+    ZeroPageAddr += cpu->X;
+    cycles--;
+    cpu->Y = cpu->read_byte(cycles, *memory, ZeroPageAddr);
+    cpu->ld_set_status(cpu->Y);
+  }
+
+  void LDY_ABS(CPU* cpu, s32& cycles, MEM* memory)
+  {
+    Word AbsAddr = cpu->fetch_word(cycles, *memory);
+    cpu->Y = cpu->read_byte(cycles, *memory, AbsAddr);
+    cpu->ld_set_status(cpu->Y);
+  }
+
+  void LDY_ABSX(CPU* cpu, s32& cycles, MEM* memory)
+  {
+    Word AbsAddr = cpu->fetch_word(cycles, *memory);
+    Word AbsAddrX = AbsAddr + cpu->X;
+    if (AbsAddrX - AbsAddr >= 0xFF)
+      cycles--;
+    cpu->Y = cpu->read_byte(cycles, *memory, AbsAddrX);
+    cpu->ld_set_status(cpu->Y);
   }
 
   void JSR(CPU* cpu, s32& cycles, MEM* memory)
