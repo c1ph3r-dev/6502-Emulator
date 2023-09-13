@@ -5,6 +5,7 @@ namespace EM6502
 {
     using Byte = unsigned char;
     using Word = unsigned short;
+    using Register = Byte;
 
     using u32 = unsigned int;
     using s32 = signed int;

@@ -14,7 +14,7 @@ namespace EM6502
         Word PC;        // Program counter
         Word SP;        // Stack pointer // ToDo: switch to Byte
 
-        Byte A, X, Y;   // Registers
+        Register A, X, Y;   // Registers
 
         Byte C : 1; // Status flag {Carry}
         Byte Z : 1; // Status flag {Zero}
@@ -61,8 +61,8 @@ namespace EM6502
             set_instructions();
     		memory.initialize();
     	}
-    public:
 
+    public:
         Byte fetch_byte(s32& cycles, MEM& memory)
         {
             auto Data = memory[PC];
@@ -99,7 +99,7 @@ namespace EM6502
             return LoByte | (HiByte << 8);
         }
 
-        inline void ld_set_status(Byte& reg)
+        inline void ld_set_status(Register& reg)
         {
             Z = (reg == 0);
             N = (reg & 0b10000000) > 0;
@@ -138,6 +138,12 @@ namespace EM6502
             }
             const s32 NumCyclesUsed = CyclesRequested - cycles;
             return NumCyclesUsed;
+        }
+
+        void load_register(s32& cycles, MEM& memory, Word address, Register& reg)
+        {
+            reg = read_byte(cycles, memory, address);
+            ld_set_status(reg);
         }
     };
 }
